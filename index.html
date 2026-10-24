@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardiac Conduction — Gap Phenomenon & EP Lab (V1 above Lead II)</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #070d19;
+  --panel: #0d1726;
+  --panel-border: #1b2a42;
+  --panel-hover: #16243b;
+  --text: #f0f5fc;
+  --muted: #8e9bb0;
+  --cyan: #38bdf8;
+  --orange: #fb923c;
+  --pink: #f472b6;
+  --green: #4ade80;
+  --red: #f87171;
+  --yellow: #facc15;
+  --purple: #c084fc;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  padding: 12px 20px;
+  background: #091220e6;
+  border-bottom: 1px solid var(--panel-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-title h1 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-title h1 span.badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cyan);
+  background: #0284c720;
+  border: 1px solid #0284c750;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.header-sub {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.global-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-border);
+  background: #18263e;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn:hover {
+  border-color: var(--cyan);
+  background: #1f3252;
+  color: #fff;
+}
+
+.btn-primary {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #0369a1;
+}
+
+.btn-pvc {
+  background: #b91c1c;
+  border-color: #f87171;
+  color: #fff;
+  font-weight: 700;
+}
+
+.btn-pvc:hover {
+  background: #dc2626;
+  border-color: #fca5a5;
+  box-shadow: 0 0 12px #ef444480;
+}
+
+.btn-defib {
+  background: #ca8a04;
+  border-color: #facc15;
+  color: #000;
+  font-weight: 800;
+  animation: pulse-yellow 1.5s infinite;
+}
+
+.btn-defib:hover {
+  background: #eab308;
+  box-shadow: 0 0 14px #facc15a0;
+}
+
+@keyframes pulse-yellow {
+  0% { box-shadow: 0 0 0 0 #facc1580; }
+  70% { box-shadow: 0 0 0 10px #facc1500; }
+  100% { box-shadow: 0 0 0 0 #facc1500; }
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0f1c30;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-border);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.speed-control input[type=range] {
+  width: 70px;
+  accent-color: var(--cyan);
+}
+
+main {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 4-Panel Grid Dashboard Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(310px, 1fr) minmax(350px, 1.2fr) minmax(360px, 1.2fr) minmax(280px, 0.9fr);
+  gap: 16px;
+}
+
+@media (max-width: 1400px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 20px #00000040;
+  position: relative;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1a2942;
+  padding-bottom: 8px;
+}
+
+.panel-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title span.num {
+  background: #1a2a44;
+  color: var(--cyan);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* Shortcut Pills */
+.pills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #132238;
+  border: 1px solid var(--panel-border);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pill:hover, .pill.active {
+  background: var(--cyan);
+  color: #040914;
+  border-color: var(--cyan);
+  font-weight: 700;
+}
+
+/* Sliders List */
+.controls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  max-height: 480px;
+  padding-right: 4px;
+}
+
+.ctrl-item {
+  background: #091220;
+  border: 1px solid #17263d;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.ctrl-item.gap-box {
+  border-color: #38bdf850;
+  background: #0c1a2e;
+}
+
+.ctrl-item.pvc-box {
+  border-color: #ef444450;
+  background: #1a0c10;
+}
+
+.ctrl-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.ctrl-val {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+input[type=range] {
+  width: 100%;
+  margin-top: 6px;
+  accent-color: var(--cyan);
+  cursor: pointer;
+}
+
+/* Pathway Canvas Panel */
+.svg-container {
+  background: #040912;
+  border: 1px solid #17263c;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 380px;
+}
+
+svg.pathway-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 440px;
+}
+
+.pathway-overlay-info {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  text-align: right;
+  font-size: 0.75rem;
+  font-family: ui-monospace, monospace;
+}
+
+.pathway-overlay-info div.hr {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--green);
+}
+
+/* Action Potential Panel */
+.ap-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--panel-border);
+  padding-bottom: 6px;
+}
+
+.ap-tab {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #111e33;
+  color: var(--muted);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.ap-tab.active {
+  background: #0284c725;
+  color: var(--cyan);
+  border-color: #0284c760;
+  font-weight: 700;
+}
+
+.ap-canvas-box {
+  background: #040912;
+  border: 1px solid #17263c;
+  border-radius: 8px;
+  height: 380px;
+  position: relative;
+}
+
+canvas.ap-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Concepts Panel */
+.concepts-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 440px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.concept-card {
+  background: #091220;
+  border: 1px solid #17263c;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.78rem;
+}
+
+.concept-card h4 {
+  margin: 0 0 4px 0;
+  font-size: 0.82rem;
+  color: var(--cyan);
+}
+
+.concept-card ul {
+  margin: 0;
+  padding-left: 16px;
+  color: var(--muted);
+}
+
+.concept-card li {
+  margin-bottom: 3px;
+}
+
+/* Real-Time Live Lead V1 & Lead II Oscilloscope */
+.oscilloscope-panel {
+  background: #040912;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.oscilloscope-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.oscilloscope-readout {
+  display: flex;
+  gap: 16px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.oscilloscope-readout span.val {
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+canvas.ecg-canvas {
+  width: 100%;
+  height: 190px;
+  display: block;
+  background: #02060e;
+  border-radius: 8px;
+  border: 1px solid #132238;
+}
+
+/* Scenario Grid Matrix */
+.scenarios-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scenarios-section h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.scenario-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.scenario-card:hover {
+  border-color: var(--cyan);
+  background: var(--panel-hover);
+  transform: translateY(-2px);
+}
+
+.scenario-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scenario-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.scenario-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #1e293b;
+  color: var(--muted);
+}
+
+canvas.scenario-ecg {
+  width: 100%;
+  height: 85px;
+  background: #030814;
+  border-radius: 6px;
+  border: 1px solid #16243b;
+  display: block;
+}
+
+.scenario-metrics {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  border-top: 1px solid #182840;
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+/* Preset Buttons Bottom Bar */
+.preset-bar {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preset-bar-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.preset-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #091322;
+  border: 1px solid #1a2b45;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-btn:hover, .preset-btn.active {
+  background: #0284c725;
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.status-callout {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  background: #0c1c30;
+  border-left: 4px solid var(--cyan);
+  color: var(--text);
+  margin-top: 4px;
+}
+
+.status-callout.blocked {
+  border-left-color: var(--red);
+  background: #2a1215;
+  color: #fca5a5;
+}
+
+.status-callout.warning {
+  border-left-color: var(--orange);
+  background: #2a1a0c;
+  color: #ffedd5;
+}
+
+.status-callout.gap-callout {
+  border-left-color: var(--cyan);
+  background: #0c2438;
+  color: #e0f2fe;
+}
+
+.status-callout.vf-alert {
+  border-left-color: #ef4444;
+  background: #450a0a;
+  color: #fecaca;
+  font-weight: 800;
+  animation: flash-red 0.8s infinite alternate;
+}
+
+@keyframes flash-red {
+  0% { background: #450a0a; }
+  100% { background: #7f1d1d; }
+}
+
+.recovery-indicator {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green);
+  background: #0a2618;
+  border: 1px solid var(--green);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.gap-indicator {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--cyan);
+  background: #0284c730;
+  border: 1px solid var(--cyan);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.vf-indicator {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #ef4444;
+  background: #450a0a;
+  border: 1px solid #ef4444;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>Cardiac Conduction <span class="badge">Gap Phenomenon & EP Lab</span></h1>
+    <div class="header-sub">Gap Phenomenon paradox, R-on-T VF, Lead V1 above Lead II, & proportional speeds</div>
+  </div>
+
+  <div class="global-controls">
+    <button id="btnPlay" class="btn btn-primary">▶ Play</button>
+    <button id="btnPause" class="btn">⏸ Pause</button>
+    <button id="btnReset" class="btn">↺ Reset</button>
+    <button id="btnStep" class="btn">➔ Step</button>
+    <button id="btnTriggerPvc" class="btn btn-pvc">⚡ Trigger PVC Beat</button>
+    <button id="btnDefib" class="btn btn-defib">⚡ Defibrillate / Shock (200J)</button>
+    
+    <div class="speed-control">
+      <label for="speedRange">Speed:</label>
+      <input type="range" id="speedRange" min="0.2" max="2.0" step="0.1" value="1.0">
+      <span id="speedVal">1.0x</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 4-PANEL DASHBOARD GRID -->
+  <div class="dashboard-grid">
+    
+    <!-- PANEL 1: ADJUSTABLE PARAMETERS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><span class="num">1</span> Adjustable Parameters</div>
+        <div class="pills">
+          <button class="pill" data-preset="1">Normal</button>
+          <button class="pill" data-preset="11">Gap Mode</button>
+          <button class="pill" data-preset="10">R-on-T VF</button>
+          <button class="pill" data-preset="4">Full RBBB</button>
+          <button class="pill" data-preset="5">Full LBBB</button>
+        </div>
+      </div>
+
+      <div class="controls-list">
+        <div class="ctrl-item">
+          <div class="ctrl-label">Drive Train (S1-S1 TCL) <span id="v_tcl" class="ctrl-val">800 ms</span></div>
+          <input type="range" id="s_tcl" min="300" max="2000" step="10" value="800">
+          <div style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Atrial Rate: <strong id="v_hr" style="color:var(--green)">75 bpm</strong></div>
+        </div>
+
+        <div class="ctrl-item gap-box">
+          <div class="ctrl-label" style="color:#7dd3fc">S1-S2 Extra-Stimulus Interval <span id="v_s1s2" class="ctrl-val" style="color:#38bdf8">280 ms</span></div>
+          <input type="range" id="s_s1s2" min="150" max="500" step="5" value="280">
+          <div style="font-size:0.68rem; color:#a5f3fc; margin-top:2px;">
+            🔍 Gap Paradox: 340ms (S2 Block) vs 280ms (Proximal AV Delay Allows Bundle Recovery & Conducts!)
+          </div>
+        </div>
+
+        <div class="ctrl-item pvc-box">
+          <div class="ctrl-label" style="color:#fca5a5">PVC Coupling Interval <span id="v_pvc_coupling" class="ctrl-val" style="color:#fca5a5">220 ms</span></div>
+          <input type="range" id="s_pvc_coupling" min="140" max="600" step="10" value="220">
+          <div style="font-size:0.68rem; color:#f87171; margin-top:2px;">
+            ⚠️ 180-280ms = T-wave Vulnerable Zone (Triggers R-on-T VT/VF)
+          </div>
+        </div>
+
+        <div class="ctrl-item">
+          <div class="ctrl-label">AV Node Baseline Delay <span id="v_av_delay" class="ctrl-val">120 ms</span></div>
+          <input type="range" id="s_av_delay" min="50" max="350" step="5" value="120">
+        </div>
+
+        <div class="ctrl-item">
+          <div class="ctrl-label">AV Node Recovery Time (ERP) <span id="v_av_erp" class="ctrl-val">240 ms</span></div>
+          <input type="range" id="s_av_erp" min="150" max="700" step="10" value="240">
+        </div>
+
+        <div class="ctrl-item">
+          <div class="ctrl-label">Right Bundle Delay <span id="v_rb_delay" class="ctrl-val">50 ms</span></div>
+          <input type="range" id="s_rb_delay" min="20" max="200" step="5" value="50">
+        </div>
+
+        <div class="ctrl-item">
+          <div class="ctrl-label">Right Bundle Recovery Time (ERP) <span id="v_rb_erp" class="ctrl-val">320 ms</span></div>
+          <input type="range" id="s_rb_erp" min="150" max="600" step="10" value="320">
+        </div>
+
+        <div class="ctrl-item">
+          <div class="ctrl-label">Left Bundle Delay <span id="v_lb_delay" class="ctrl-val">50 ms</span></div>
+          <input type="range" id="s_lb_delay" min="20" max="200" step="5" value="50">
+        </div>
+
+        <div class="ctrl-item">
+          <div class="ctrl-label">Left Bundle Recovery Time (ERP) <span id="v_lb_erp" class="ctrl-val">320 ms</span></div>
+          <input type="range" id="s_lb_erp" min="150" max="600" step="10" value="320">
+        </div>
+
+        <div class="ctrl-item">
+          <div class="ctrl-label">Phase 4 Depolarization Drift <span id="v_p4_drift" class="ctrl-val">Off</span></div>
+          <input type="range" id="s_p4_drift" min="0" max="100" step="5" value="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: PATHWAY ANIMATION -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><span class="num">2</span> Conduction Pathway Animation</div>
+        <div style="font-size:0.75rem; color:var(--muted)">Proportional Speeds & Gap Vectors</div>
+      </div>
+
+      <div class="svg-container">
+        <div class="pathway-overlay-info">
+          <div class="hr"><span id="liveHr">75</span> <span style="font-size:0.7rem; font-weight:normal">BPM</span></div>
+          <div style="color:var(--muted)">Time: <span id="liveTimer" style="color:var(--cyan)">0 ms</span></div>
+          <div id="recoveryBadge" style="margin-top:4px;"></div>
+        </div>
+
+        <svg class="pathway-svg" viewBox="0 0 450 480">
+          <!-- Heart Silhouette Background -->
+          <path d="M 225 40 C 130 40, 70 120, 70 230 C 70 340, 160 440, 225 460 C 290 440, 380 340, 380 230 C 380 120, 320 40, 225 40 Z" fill="#0f192b" stroke="#1f3252" stroke-width="3" />
+          
+          <!-- Atrial Chambers -->
+          <path d="M 110 90 Q 225 45 340 90 Q 225 180 110 90 Z" fill="#f472b615" stroke="#f472b650" stroke-width="2" />
+          
+          <!-- Ventricular Myocardium boundaries -->
+          <path id="ventricle_bg" d="M 120 180 Q 225 210 330 180 Q 340 330 225 430 Q 110 330 120 180 Z" fill="#38bdf808" stroke="#38bdf830" stroke-width="2" />
+          
+          <!-- Interventricular Septum Area -->
+          <rect x="195" y="240" width="60" height="110" rx="10" fill="#38bdf80a" stroke="#38bdf825" stroke-dasharray="3,3" />
+          <text x="225" y="295" fill="#8e9bb0" font-size="8" text-anchor="middle">Interventricular</text>
+          <text x="225" y="305" fill="#8e9bb0" font-size="8" text-anchor="middle">Septum Muscle</text>
+
+          <!-- CONDUCTION SYSTEM PATHWAYS -->
+          <path id="path_atria" d="M 160 75 Q 190 100 225 125" fill="none" stroke="#f472b6" stroke-width="4" stroke-linecap="round" />
+          <circle id="node_av" cx="225" cy="135" r="14" fill="#fb923c" stroke="#fff" stroke-width="2" />
+          <path id="path_his" d="M 225 149 L 225 185" fill="none" stroke="#fb923c" stroke-width="6" />
+          
+          <!-- Right Bundle Branch Path -->
+          <path id="path_rb" d="M 225 185 C 200 230, 150 280, 140 370" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" />
+          <!-- Left Bundle Branch Path -->
+          <path id="path_lb" d="M 225 185 C 250 230, 300 280, 310 370" fill="none" stroke="#4ade80" stroke-width="4" stroke-linecap="round" />
+
+          <!-- TRANS-MYOCARDIAL SEPTAL BRIDGES -->
+          <path id="path_trans_l2r" d="M 280 320 C 240 330, 190 330, 155 330" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="4,4" opacity="0" />
+          <path id="path_trans_r2l" d="M 170 320 C 210 330, 260 330, 295 330" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="4,4" opacity="0" />
+
+          <!-- RETROGRADE BUNDLE PENETRATION PATHWAYS -->
+          <path id="path_retro_rb" d="M 140 370 C 145 320, 175 270, 205 220" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="3,3" opacity="0" />
+          <path id="path_retro_lb" d="M 310 370 C 305 320, 275 270, 245 220" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="3,3" opacity="0" />
+
+          <!-- PVC Ectopic Focus Group -->
+          <g id="pvc_focus_group" opacity="0">
+            <circle cx="300" cy="400" r="12" fill="#ef444450" stroke="#f87171" stroke-width="2" />
+            <circle cx="300" cy="400" r="5" fill="#ef4444" />
+          </g>
+
+          <!-- MULTIFOCAL VF RE-ENTRY WAVELETS -->
+          <g id="vf_wavelets_group" opacity="0">
+            <circle id="vf_w1" cx="160" cy="280" r="18" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,2" />
+            <circle id="vf_w2" cx="290" cy="310" r="22" fill="none" stroke="#f87171" stroke-width="3" stroke-dasharray="4,2" />
+            <circle id="vf_w3" cx="225" cy="380" r="26" fill="none" stroke="#facc15" stroke-width="3" stroke-dasharray="4,2" />
+          </g>
+
+          <!-- SA Node -->
+          <circle id="node_sa" cx="155" cy="70" r="10" fill="#f87171" stroke="#fff" stroke-width="2" />
+          
+          <!-- ANIMATED IMPULSE FRONT PULSES -->
+          <circle id="pulse_sa" cx="155" cy="70" r="4" fill="#fff" />
+          <circle id="pulse_av" cx="225" cy="135" r="4" fill="#fff" />
+          <circle id="pulse_rb" cx="225" cy="185" r="4" fill="#fff" />
+          <circle id="pulse_lb" cx="225" cy="185" r="4" fill="#fff" />
+          <circle id="pulse_trans" cx="225" cy="325" r="0" fill="#f472b6" />
+          <circle id="pulse_retro" cx="225" cy="325" r="0" fill="#ff7e7e" />
+          <circle id="pulse_pvc" cx="300" cy="400" r="0" fill="#ef4444" />
+
+          <!-- LABELS -->
+          <text x="110" y="65" fill="#f87171" font-size="11" font-weight="bold">SA node</text>
+          <text x="350" y="100" fill="#f472b6" font-size="11" font-weight="bold">Atria (P wave)</text>
+          <text x="245" y="135" fill="#fb923c" font-size="11" font-weight="bold">AV node</text>
+          <text x="235" y="170" fill="#facc15" font-size="10">His</text>
+          <text x="80" y="270" fill="#38bdf8" font-size="11" font-weight="bold">Right bundle (RB)</text>
+          <text x="320" y="270" fill="#4ade80" font-size="11" font-weight="bold">Left bundle (LB)</text>
+          <text id="trans_label" x="225" y="445" fill="#f472b6" font-size="10" text-anchor="middle" font-weight="bold"></text>
+        </svg>
+      </div>
+
+      <div id="statusCallout" class="status-callout">
+        Status: <strong>Normal Synchronous Conduction</strong>
+      </div>
+    </div>
+
+    <!-- PANEL 3: ACTION POTENTIALS & NA+ AVAILABILITY -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><span class="num">3</span> Action Potentials & Fast Na+ Channel Availability</div>
+      </div>
+
+      <div class="ap-tabs">
+        <button class="ap-tab active" data-aptab="atria">Atrial Myocyte</button>
+        <button class="ap-tab" data-aptab="av">AV Node</button>
+        <button class="ap-tab" data-aptab="rb">Right Bundle</button>
+        <button class="ap-tab" data-aptab="lb">Left Bundle</button>
+      </div>
+
+      <div class="ap-canvas-box">
+        <canvas id="apCanvas" class="ap-canvas" width="450" height="380"></canvas>
+      </div>
+    </div>
+
+    <!-- PANEL 4: KEY CONCEPTS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><span class="num">4</span> Key EP Concepts</div>
+      </div>
+
+      <div class="concepts-box">
+        <div class="concept-card" style="border-color:#38bdf880; background:#0a1a2e">
+          <h4 style="color:#7dd3fc">🔍 The Gap Phenomenon Paradox</h4>
+          <ul>
+            <li><strong>The Paradox:</strong> An impulse at a <em>shorter</em> coupling interval ($S_2 = 280\text{ ms}$) conducts, whereas an impulse at a <em>longer</em> interval ($S_2 = 340\text{ ms}$) blocks distally!</li>
+            <li><strong>Electrophysiological Cause:</strong> At $340\text{ ms}$, $S_2$ traverses the AV node rapidly and strikes the distal bundle branch while it is still in absolute refractoriness $\rightarrow$ <strong>Distal Block</strong>.</li>
+            <li><strong>Proximal Delay Brake:</strong> At $280\text{ ms}$, $S_2$ incurs marked delay in the proximal AV node. This delay grants the distal bundle branch enough time to recover, allowing $S_2$ to conduct!</li>
+          </ul>
+        </div>
+
+        <div class="concept-card" style="border-color:#ef444480; background:#1c0b0e">
+          <h4 style="color:#f87171">⚡ R-on-T Vulnerability & VF Engine</h4>
+          <ul>
+            <li><strong>Vulnerable Window:</strong> Occurs during the relative refractory period (T-wave peak-to-end, $\approx 180\text{--}280\text{ ms}$).</li>
+            <li><strong>Re-entry Trigger:</strong> A PVC striking this window encounters inhomogeneous repolarization, causing rapid chaotic re-entry (Polymorphic VT / VF).</li>
+          </ul>
+        </div>
+
+        <div class="concept-card">
+          <h4 style="color:var(--cyan)">Lead V1 Displayed Above Lead II</h4>
+          <ul>
+            <li><strong>Lead V1 (Top):</strong> Anterior chest view; ideal for verifying $rsR'$ (RBBB) vs broad notched $QS$ (LBBB).</li>
+            <li><strong>Lead II (Bottom):</strong> Inferior view; evaluates longitudinal sinus rhythm, $P$ wave morphology, and $PR$ intervals.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- REAL-TIME LIVE DUAL LEAD ECG OSCILLOSCOPE (LEAD V1 TOP, LEAD II BOTTOM) -->
+  <div class="oscilloscope-panel">
+    <div class="oscilloscope-header">
+      <div>Real-Time Dynamic Surface ECG Oscilloscope — <strong>Lead V1 (Top) & Lead II (Bottom)</strong></div>
+      <div class="oscilloscope-readout">
+        <div>PR Interval: <span id="livePr" class="val">170 ms</span></div>
+        <div>QRS Duration: <span id="liveQrs" class="val">90 ms</span></div>
+        <div>Pattern: <span id="liveCondState" class="val" style="color:var(--green)">1:1 Normal</span></div>
+      </div>
+    </div>
+    <canvas id="liveEcgCanvas" class="ecg-canvas" width="1600" height="190"></canvas>
+  </div>
+
+  <!-- MULTI-SCENARIO COMPARISON MATRIX -->
+  <div class="scenarios-section">
+    <h3>
+      <span>Scenario Matrix & Diagnostic Patterns (Lead V1 Top / Lead II Bottom)</span>
+      <span style="font-size:0.75rem; font-weight:normal; color:var(--muted)">Compare PR intervals, QRS duration, and multi-lead morphology</span>
+    </h3>
+
+    <div class="scenarios-grid">
+      
+      <!-- Card A: Normal -->
+      <div class="scenario-card" id="card_normal" onclick="loadPreset('1')">
+        <div class="scenario-card-header">
+          <div class="scenario-title" style="color:var(--green)">A. Normal Conduction</div>
+          <div class="scenario-tag">1:1 Normal</div>
+        </div>
+        <canvas class="scenario-ecg" id="secg_normal" width="280" height="85"></canvas>
+        <div class="scenario-metrics">
+          <div>PR: 170 ms</div>
+          <div>QRS: 90 ms</div>
+        </div>
+      </div>
+
+      <!-- Card B: Gap Phenomenon -->
+      <div class="scenario-card" id="card_gap" onclick="loadPreset('11')" style="border-color:#38bdf870">
+        <div class="scenario-card-header">
+          <div class="scenario-title" style="color:#7dd3fc">B. Gap Phenomenon</div>
+          <div class="scenario-tag" style="background:#0284c730; color:#38bdf8">S2 Gap Conducts</div>
+        </div>
+        <canvas class="scenario-ecg" id="secg_gap" width="280" height="85"></canvas>
+        <div class="scenario-metrics">
+          <div>S2 = 280 ms</div>
+          <div style="color:#38bdf8">Proximal Delay $\rightarrow$ Conducts!</div>
+        </div>
+      </div>
+
+      <!-- Card C: R-on-T VF Trigger -->
+      <div class="scenario-card" id="card_vf" onclick="loadPreset('10')" style="border-color:#ef444470">
+        <div class="scenario-card-header">
+          <div class="scenario-title" style="color:#f87171">C. R-on-T Triggered VF</div>
+          <div class="scenario-tag" style="background:#7f1d1d; color:#fca5a5">Chaotic VF</div>
+        </div>
+        <canvas class="scenario-ecg" id="secg_vf" width="280" height="85"></canvas>
+        <div class="scenario-metrics">
+          <div>Coupling: 220 ms</div>
+          <div style="color:#f87171">Polymorphic VT / VF</div>
+        </div>
+      </div>
+
+      <!-- Card D: Complete RBBB -->
+      <div class="scenario-card" id="card_rbbb" onclick="loadPreset('4')">
+        <div class="scenario-card-header">
+          <div class="scenario-title" style="color:var(--pink)">D. Complete RBBB</div>
+          <div class="scenario-tag">Retrograde RB</div>
+        </div>
+        <canvas class="scenario-ecg" id="secg_rbbb" width="280" height="85"></canvas>
+        <div class="scenario-metrics">
+          <div>PR: 170 ms</div>
+          <div>QRS: 155 ms (rsR')</div>
+        </div>
+      </div>
+
+      <!-- Card E: Complete LBBB -->
+      <div class="scenario-card" id="card_lbbb" onclick="loadPreset('5')">
+        <div class="scenario-card-header">
+          <div class="scenario-title" style="color:var(--purple)">E. Complete LBBB</div>
+          <div class="scenario-tag">Retrograde LB</div>
+        </div>
+        <canvas class="scenario-ecg" id="secg_lbbb" width="280" height="85"></canvas>
+        <div class="scenario-metrics">
+          <div>PR: 170 ms</div>
+          <div>QRS: 160 ms (QS V1)</div>
+        </div>
+      </div>
+
+      <!-- Card F: Bilateral BBB -->
+      <div class="scenario-card" id="card_bilateral" onclick="loadPreset('9')">
+        <div class="scenario-card-header">
+          <div class="scenario-title" style="color:var(--red)">F. Bilateral BBB</div>
+          <div class="scenario-tag">P Waves Only</div>
+        </div>
+        <canvas class="scenario-ecg" id="secg_bilateral" width="280" height="85"></canvas>
+        <div class="scenario-metrics">
+          <div>Complete Block</div>
+          <div>No QRS</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PRESET SCENARIO BUTTONS BAR -->
+  <div class="preset-bar">
+    <div class="preset-bar-title">Interactive Clinical Presets — Load Parameters Instantly</div>
+    <div class="preset-buttons">
+      <button class="preset-btn active" data-preset="1">1. Normal Sinus Rhythm (V1 / Lead II)</button>
+      <button class="preset-btn" data-preset="11" style="border-color:#38bdf8; color:#7dd3fc">2. 🔍 Gap Phenomenon Paradox (S1-S2 Protocol)</button>
+      <button class="preset-btn" data-preset="10" style="border-color:#ef4444; color:#f87171">3. ⚠️ Trigger R-on-T VF / Polymorphic VT</button>
+      <button class="preset-btn" data-preset="2">4. 1st Degree AV Block (Long PR)</button>
+      <button class="preset-btn" data-preset="3">5. 2nd Degree AV Block (Wenckebach)</button>
+      <button class="preset-btn" data-preset="4_inc">6. Incomplete RBBB (95ms delay)</button>
+      <button class="preset-btn" data-preset="4">7. Complete RBBB (Retrograde RB Penetration)</button>
+      <button class="preset-btn" data-preset="5_inc">8. Incomplete LBBB (95ms delay)</button>
+      <button class="preset-btn" data-preset="5">9. Complete LBBB (Retrograde LB Penetration)</button>
+      <button class="preset-btn" data-preset="9">10. Bilateral BBB / CHB (P Waves Only)</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// SIMULATOR STATE & MODEL LOGIC
+const S = {
+  playing: true,
+  speed: 1.0,
+  t: 0, // global ms time inside beat cycle
+  beatCount: 0,
+  
+  // Parameters
+  tcl: 800,           // ms (S1-S1 drive train cycle length)
+  s1s2: 280,          // ms (S1-S2 extra-stimulus coupling interval)
+  gapActive: false,    // Gap Phenomenon Mode flag
+  pvcCoupling: 220,    // ms coupling interval for PVC
+  pvcActive: false,    // Triggered PVC beat flag
+  inVF: false,         // R-on-T Triggered Polymorphic VT / VF state
+  pvcResetBonus: 0,    // Memory reset bonus following PVC bundle penetration
+  avErp: 240,         // ms (Proximal AV Node ERP)
+  avDelay: 120,       // ms
+  rbDelay: 50,        // ms (20 - 200)
+  rbErp: 320,         // ms (Distal Right Bundle ERP)
+  lbDelay: 50,        // ms (20 - 200)
+  lbErp: 320,         // ms (Distal Left Bundle ERP)
+  p4Drift: 0,         // 0 - 100
+
+  // Active Tab for Action Potential Graph
+  apTab: 'atria',     // 'atria', 'av', 'rb', 'lb'
+
+  // Dynamic Beat-to-Beat Memory & Recovery State
+  wenckebachStep: 0,
+  lastBeatWasNonConducted: false,
+  pauseRecoveryBonus: 0,
+
+  // Dual Lead ECG Trace Buffers
+  ecgBufferLeadV1: new Array(800).fill(0),
+  ecgBufferLead2: new Array(800).fill(0)
+};
+
+const COMPLETE_BLOCK_THRESHOLD = 150; // Delay >= 150ms denotes complete non-conducting bundle block
+
+// DYNAMIC COLOR MAPPER FUNCTION
+function getConductionColor(delayMs, isBlocked) {
+  if (isBlocked || delayMs >= COMPLETE_BLOCK_THRESHOLD) {
+    return '#ef4444'; // Red Crimson
+  }
+  if (delayMs <= 70) {
+    return '#38bdf8'; // Bright Cyan
+  }
+  if (delayMs <= 110) {
+    return '#fb923c'; // Amber / Orange
+  }
+  return '#f472b6'; // Magenta / Reddish-Orange
+}
+
+// PRESET CONFIGURATIONS
+const PRESETS = {
+  1:     { tcl: 800, s1s2: 350, gapActive: false, avErp: 350, avDelay: 120, rbDelay: 50,  rbErp: 300, lbDelay: 50,  lbErp: 300, p4Drift: 0, pvcCoupling: 320 },
+  2:     { tcl: 800, s1s2: 350, gapActive: false, avErp: 450, avDelay: 270, rbDelay: 50,  rbErp: 300, lbDelay: 50,  lbErp: 300, p4Drift: 0, pvcCoupling: 320 },
+  3:     { tcl: 500, s1s2: 350, gapActive: false, avErp: 380, avDelay: 160, rbDelay: 50,  rbErp: 300, lbDelay: 50,  lbErp: 300, p4Drift: 0, pvcCoupling: 320 },
+  '4_inc':{ tcl: 800, s1s2: 350, gapActive: false, avErp: 350, avDelay: 120, rbDelay: 95,  rbErp: 300, lbDelay: 50,  lbErp: 300, p4Drift: 0, pvcCoupling: 320 },
+  4:     { tcl: 800, s1s2: 350, gapActive: false, avErp: 350, avDelay: 120, rbDelay: 160, rbErp: 600, lbDelay: 50,  lbErp: 300, p4Drift: 0, pvcCoupling: 320 },
+  '5_inc':{ tcl: 800, s1s2: 350, gapActive: false, avErp: 350, avDelay: 120, rbDelay: 50,  rbErp: 300, lbDelay: 95,  lbErp: 300, p4Drift: 0, pvcCoupling: 320 },
+  5:     { tcl: 800, s1s2: 350, gapActive: false, avErp: 350, avDelay: 120, rbDelay: 50,  rbErp: 300, lbDelay: 160, lbErp: 600, p4Drift: 0, pvcCoupling: 320 },
+  9:     { tcl: 800, s1s2: 350, gapActive: false, avErp: 350, avDelay: 120, rbDelay: 160, rbErp: 600, lbDelay: 160, lbErp: 600, p4Drift: 0, pvcCoupling: 320 },
+  10:    { tcl: 800, s1s2: 350, gapActive: false, avErp: 350, avDelay: 120, rbDelay: 50,  rbErp: 300, lbDelay: 50,  lbErp: 300, p4Drift: 0, pvcCoupling: 220 }, // R-on-T VF
+  11:    { tcl: 800, s1s2: 280, gapActive: true,  avErp: 220, avDelay: 120, rbDelay: 50,  rbErp: 330, lbDelay: 50,  lbErp: 330, p4Drift: 0, pvcCoupling: 320 }  // Gap Phenomenon
+};
+
+// DOM BINDINGS & INIT
+document.addEventListener('DOMContentLoaded', () => {
+  setupControls();
+  setupPresets();
+  setupApTabs();
+  drawStaticScenarioECGs();
+  requestAnimationFrame(animLoop);
+});
+
+function setupControls() {
+  const bindSlider = (id, key, outId, fmtFn) => {
+    const el = document.getElementById(id);
+    const out = document.getElementById(outId);
+    el.addEventListener('input', (e) => {
+      S[key] = parseFloat(e.target.value);
+      if (out) out.textContent = fmtFn ? fmtFn(S[key]) : S[key] + ' ms';
+      if (key === 'tcl') {
+        const hr = Math.round(60000 / S.tcl);
+        document.getElementById('v_hr').textContent = hr + ' bpm';
+        document.getElementById('liveHr').textContent = hr;
+      }
+    });
+  };
+
+  bindSlider('s_tcl', 'tcl', 'v_tcl');
+  bindSlider('s_s1s2', 's1s2', 'v_s1s2');
+  bindSlider('s_pvc_coupling', 'pvcCoupling', 'v_pvc_coupling');
+  bindSlider('s_av_erp', 'avErp', 'v_av_erp');
+  bindSlider('s_av_delay', 'avDelay', 'v_av_delay');
+  bindSlider('s_rb_delay', 'rbDelay', 'v_rb_delay');
+  bindSlider('s_rb_erp', 'rbErp', 'v_rb_erp');
+  bindSlider('s_lb_delay', 'lbDelay', 'v_lb_delay');
+  bindSlider('s_lb_erp', 'lbErp', 'v_lb_erp');
+  bindSlider('s_p4_drift', 'p4Drift', 'v_p4_drift', v => v === 0 ? 'Off' : v + '%');
+
+  // Trigger PVC Button
+  document.getElementById('btnTriggerPvc').addEventListener('click', () => {
+    triggerPVC();
+  });
+
+  // Defibrillate Shock Button
+  document.getElementById('btnDefib').addEventListener('click', () => {
+    defibrillateHeart();
+  });
+
+  // Play / Pause / Reset / Speed Controls
+  document.getElementById('btnPlay').addEventListener('click', () => S.playing = true);
+  document.getElementById('btnPause').addEventListener('click', () => S.playing = false);
+  document.getElementById('btnReset').addEventListener('click', () => {
+    defibrillateHeart();
+    S.t = 0;
+    S.ecgBufferLeadV1.fill(0);
+    S.ecgBufferLead2.fill(0);
+  });
+  document.getElementById('btnStep').addEventListener('click', () => {
+    S.playing = false;
+    S.t = (S.t + 20) % S.tcl;
+  });
+
+  document.getElementById('speedRange').addEventListener('input', (e) => {
+    S.speed = parseFloat(e.target.value);
+    document.getElementById('speedVal').textContent = S.speed.toFixed(1) + 'x';
+  });
+}
+
+function triggerPVC() {
+  S.pvcActive = true;
+  
+  // Check R-on-T Vulnerable Window (180ms - 280ms)
+  if (S.pvcCoupling >= 180 && S.pvcCoupling <= 280) {
+    S.inVF = true; // Trigger Polymorphic VT / VF!
+  }
+}
+
+function defibrillateHeart() {
+  S.inVF = false;
+  S.pvcActive = false;
+  S.pvcResetBonus = 180;
+}
+
+function setupPresets() {
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadPreset(btn.dataset.preset);
+    });
+  });
+
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      loadPreset(pill.dataset.preset);
+    });
+  });
+}
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  if (!p) return;
+
+  S.tcl = p.tcl;
+  S.s1s2 = p.s1s2;
+  S.gapActive = p.gapActive;
+  S.avErp = p.avErp;
+  S.avDelay = p.avDelay;
+  S.rbDelay = p.rbDelay;
+  S.rbErp = p.rbErp;
+  S.lbDelay = p.lbDelay;
+  S.lbErp = p.lbErp;
+  S.p4Drift = p.p4Drift;
+  S.pvcCoupling = p.pvcCoupling;
+
+  // Reset memory states
+  S.wenckebachStep = 0;
+  S.lastBeatWasNonConducted = false;
+  S.pauseRecoveryBonus = 0;
+  S.pvcActive = false;
+  S.inVF = false;
+  S.pvcResetBonus = 0;
+
+  if (key == 10) {
+    triggerPVC();
+  }
+
+  // Update DOM sliders
+  document.getElementById('s_tcl').value = p.tcl;
+  document.getElementById('v_tcl').textContent = p.tcl + ' ms';
+  document.getElementById('s_s1s2').value = p.s1s2;
+  document.getElementById('v_s1s2').textContent = p.s1s2 + ' ms';
+  document.getElementById('s_pvc_coupling').value = p.pvcCoupling;
+  document.getElementById('v_pvc_coupling').textContent = p.pvcCoupling + ' ms';
+  document.getElementById('s_av_erp').value = p.avErp;
+  document.getElementById('v_av_erp').textContent = p.avErp + ' ms';
+  document.getElementById('s_av_delay').value = p.avDelay;
+  document.getElementById('v_av_delay').textContent = p.avDelay + ' ms';
+  document.getElementById('s_rb_delay').value = p.rbDelay;
+  document.getElementById('v_rb_delay').textContent = p.rbDelay + ' ms';
+  document.getElementById('s_rb_erp').value = p.rbErp;
+  document.getElementById('v_rb_erp').textContent = p.rbErp + ' ms';
+  document.getElementById('s_lb_delay').value = p.lbDelay;
+  document.getElementById('v_lb_delay').textContent = p.lbDelay + ' ms';
+  document.getElementById('s_lb_erp').value = p.lbErp;
+  document.getElementById('v_lb_erp').textContent = p.lbErp + ' ms';
+  document.getElementById('s_p4_drift').value = p.p4Drift;
+  document.getElementById('v_p4_drift').textContent = p.p4Drift === 0 ? 'Off' : p.p4Drift + '%';
+
+  const hr = Math.round(60000 / p.tcl);
+  document.getElementById('v_hr').textContent = hr + ' bpm';
+  document.getElementById('liveHr').textContent = hr;
+}
+
+function setupApTabs() {
+  document.querySelectorAll('.ap-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.ap-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      S.apTab = tab.dataset.aptab;
+      drawActionPotentialGraph();
+    });
+  });
+}
+
+// MAIN ANIMATION LOOP
+let lastTimestamp = 0;
+function animLoop(timestamp) {
+  if (!lastTimestamp) lastTimestamp = timestamp;
+  const dt = (timestamp - lastTimestamp) * S.speed;
+  lastTimestamp = timestamp;
+
+  if (S.playing) {
+    S.t += dt;
+    if (S.t >= S.tcl) {
+      S.t %= S.tcl;
+      S.beatCount++;
+      
+      if (S.pvcActive && !S.inVF) {
+        S.pvcActive = false;
+        S.pvcResetBonus = 180;
+      } else {
+        S.pvcResetBonus = Math.max(0, S.pvcResetBonus - 45);
+      }
+
+      const lastCond = computeConductionPhysics();
+      if (!lastCond.ventriclesConducted) {
+        S.lastBeatWasNonConducted = true;
+        S.pauseRecoveryBonus = 160;
+      } else {
+        S.lastBeatWasNonConducted = false;
+        S.pauseRecoveryBonus = Math.max(0, S.pauseRecoveryBonus - 40);
+      }
+      
+      S.wenckebachStep = (S.wenckebachStep + 1) % 4;
+    }
+  }
+
+  document.getElementById('liveTimer').textContent = Math.round(S.t) + ' ms';
+
+  // Compute Conduction Physics & Diagnostics
+  const condState = computeConductionPhysics();
+
+  // Render Visuals
+  updatePathwaySvg(condState);
+  drawActionPotentialGraph();
+  updateLiveEcgOscilloscope(condState);
+
+  requestAnimationFrame(animLoop);
+}
+
+// ELECTROPHYSIOLOGY CONTINUOUS CONDUCTION PHYSICS ENGINE (FEATURING GAP PHENOMENON)
+function computeConductionPhysics() {
+  if (S.inVF) {
+    const statusEl = document.getElementById('statusCallout');
+    statusEl.className = 'status-callout vf-alert';
+    statusEl.innerHTML = `Status: <strong>⚠️ R-on-T TRIGGERED: POLYMORPHIC VT / VENTRICULAR FIBRILLATION (SHOCK REQUIRED!)</strong>`;
+
+    document.getElementById('livePr').textContent = '— (Chaotic)';
+    document.getElementById('liveQrs').textContent = '— (Fibrillating)';
+    document.getElementById('liveCondState').textContent = '⚠️ VF / Torsades';
+    document.getElementById('liveCondState').style.color = '#ef4444';
+    document.getElementById('recoveryBadge').innerHTML = `<span class="vf-indicator">⚠️ POLYMORPHIC VT / VF ACTIVE</span>`;
+
+    return {
+      avBlocked: true, rbBlocked: true, lbBlocked: true,
+      rbDegree: 1.0, lbDegree: 1.0, ventriclesConducted: false,
+      effectiveAvDelay: S.avDelay, effectiveRbDelay: S.rbDelay, effectiveLbDelay: S.lbDelay,
+      prInterval: null, qrsDuration: 0, isS2Beat: false, isGapConducted: false
+    };
+  }
+
+  // GAP PHENOMENON EVALUATION ENGINE
+  const isS2Beat = S.gapActive && (S.t >= S.s1s2 && S.t <= S.s1s2 + 220);
+  let isGapConducted = false;
+  let isZone1Block = false;
+  let isZone2Block = false;
+
+  let effectiveAvDelay = S.avDelay;
+  let avBlocked = false;
+
+  if (S.gapActive && isS2Beat) {
+    if (S.s1s2 < S.avErp) {
+      // Zone 2 Block: Proximal AV Node ERP Block (Delivered too early)
+      avBlocked = true;
+      isZone2Block = true;
+    } else if (S.s1s2 >= S.avErp && S.s1s2 <= 310) {
+      // THE GAP WINDOW: Severe Proximal AV Delay grants distal bundle time to recover!
+      effectiveAvDelay = S.avDelay + (320 - S.s1s2) * 1.8; // e.g. 280ms -> 120 + 72 = 192ms AV delay
+      isGapConducted = true;
+    } else {
+      // Zone 1 Block: S2 conducts rapidly through AV node (no delay) and strikes distal bundle ERP!
+      effectiveAvDelay = S.avDelay;
+      isZone1Block = true;
+    }
+  } else {
+    // Normal Sinus / Wenckebach Logic
+    if (S.tcl < 550 && S.avErp >= 380) {
+      if (S.wenckebachStep === 3) avBlocked = true;
+      else effectiveAvDelay = S.avDelay + (S.wenckebachStep * 65);
+    } else if (S.tcl < S.avErp) {
+      avBlocked = true;
+    }
+  }
+
+  // Diastolic Bundle Recovery
+  const totalBonus = S.pauseRecoveryBonus + S.pvcResetBonus;
+  let effectiveRbDelay = Math.max(30, S.rbDelay - totalBonus * 0.45);
+  let effectiveLbDelay = Math.max(30, S.lbDelay - totalBonus * 0.45);
+
+  let effectiveRbErp = Math.max(150, S.rbErp - totalBonus);
+  let effectiveLbErp = Math.max(150, S.lbErp - totalBonus);
+
+  // Bundle Branch Block Evaluation
+  let rbBlocked = false;
+  let lbBlocked = false;
+
+  if (S.gapActive && isS2Beat) {
+    if (isZone1Block) {
+      // Distal Bundle Block because impulse arrived too early without proximal delay!
+      rbBlocked = true;
+    } else if (isGapConducted) {
+      // Proximal AV delay allowed distal bundle to recover out of its ERP!
+      rbBlocked = false;
+    }
+  } else {
+    if (S.tcl < effectiveRbErp || effectiveRbDelay >= COMPLETE_BLOCK_THRESHOLD) rbBlocked = true;
+    if (S.tcl < effectiveLbErp || effectiveLbDelay >= COMPLETE_BLOCK_THRESHOLD) lbBlocked = true;
+  }
+
+  // Phase 4 Brady Block Check
+  if (S.p4Drift > 50 && S.tcl > 1200 && !S.pvcActive && S.pvcResetBonus === 0 && !S.gapActive) {
+    rbBlocked = true;
+  }
+
+  // COMPLETE HEART BLOCK REQUIREMENT
+  const ventriclesConducted = (!avBlocked || S.pvcActive) && (!rbBlocked || !lbBlocked || S.pvcActive);
+
+  // QRS Duration Calculation
+  let calculatedQrsDuration = 80;
+  let rbDegree = 0;
+  let lbDegree = 0;
+
+  if (S.pvcActive) {
+    calculatedQrsDuration = 160;
+  } else if (ventriclesConducted) {
+    if (rbBlocked) {
+      rbDegree = 1.0;
+      calculatedQrsDuration = 135 + Math.min(30, (effectiveRbDelay - 120) * 0.4);
+    } else {
+      rbDegree = Math.max(0, Math.min(1.0, (effectiveRbDelay - 50) / 70));
+    }
+
+    if (lbBlocked) {
+      lbDegree = 1.0;
+      calculatedQrsDuration = 140 + Math.min(30, (effectiveLbDelay - 120) * 0.4);
+    } else {
+      lbDegree = Math.max(0, Math.min(1.0, (effectiveLbDelay - 50) / 70));
+    }
+
+    if (!rbBlocked && !lbBlocked) {
+      const maxDegree = Math.max(rbDegree, lbDegree);
+      calculatedQrsDuration = Math.round(85 + maxDegree * 35);
+    } else {
+      calculatedQrsDuration = Math.round(calculatedQrsDuration);
+    }
+  }
+
+  let prInterval = avBlocked ? null : (60 + Math.round(effectiveAvDelay));
+  let condLabel = "Normal Sinus Rhythm";
+  let statusText = "Normal Synchronous Conduction";
+  let isWarning = false;
+  let isBlocked = false;
+  let isGapCallout = false;
+
+  if (S.gapActive) {
+    isGapCallout = true;
+    if (isZone1Block) {
+      condLabel = `Zone 1 Block (S2 = ${S.s1s2}ms Blocked Distally)`;
+      statusText = `Gap Paradox: S2 = ${S.s1s2} ms BLOCKS in Distal Bundle (Rapid AV conduction strikes distal ERP)!`;
+      isWarning = true;
+    } else if (isGapConducted) {
+      condLabel = `Gap Phenomenon Conducted (S2 = ${S.s1s2}ms)`;
+      statusText = `GAP PARADOX CONDUCTED! S2 = ${S.s1s2} ms incurs Proximal AV Delay (${Math.round(effectiveAvDelay)}ms), allowing Distal Bundle Recovery!`;
+    } else if (isZone2Block) {
+      condLabel = `Zone 2 Block (S2 = ${S.s1s2}ms Proximal AV Block)`;
+      statusText = `Zone 2 Block: S2 = ${S.s1s2} ms BLOCKS Proximally in AV Node (Encounters AVN ERP)!`;
+      isBlocked = true;
+    }
+  } else if (S.pvcActive) {
+    condLabel = "⚡ Triggered PVC Beat";
+    statusText = "Premature Ventricular Complex — Myocardial Origin & Retrograde Bundle Penetration";
+    isWarning = true;
+  } else if (avBlocked) {
+    condLabel = "AV Block (Non-conducted P)";
+    statusText = "AV Node Block — Isolated P Wave (No QRS)";
+    isBlocked = true;
+  } else if (rbBlocked && lbBlocked) {
+    condLabel = "Bilateral BBB (P Waves Only)";
+    statusText = "Bilateral Bundle Branch Block — Complete Heart Block (No QRS / P Waves Only)";
+    isBlocked = true;
+  } else if (effectiveAvDelay > 180) {
+    condLabel = `1st Degree AV Block (PR = ${prInterval}ms)`;
+    statusText = `1st Degree AV Block (PR = ${prInterval} ms) — Slowed AV Nodal Conduction`;
+    isWarning = true;
+  }
+
+  if (ventriclesConducted && !S.pvcActive && !S.gapActive) {
+    if (rbBlocked) {
+      condLabel = `Trans-Myocardial RBBB (${calculatedQrsDuration}ms)`;
+      statusText = `Complete RBBB — Trans-Myocardial Conduction & Retrograde RB Penetration (${calculatedQrsDuration} ms)`;
+      isWarning = true;
+    } else if (lbBlocked) {
+      condLabel = `Trans-Myocardial LBBB (${calculatedQrsDuration}ms)`;
+      statusText = `Complete LBBB — Trans-Myocardial Conduction & Retrograde LB Penetration (${calculatedQrsDuration} ms)`;
+      isWarning = true;
+    }
+  }
+
+  // Update Status Callout UI
+  const statusEl = document.getElementById('statusCallout');
+  statusEl.className = 'status-callout' + (isGapCallout ? ' gap-callout' : (isBlocked ? ' blocked' : (isWarning ? ' warning' : '')));
+  statusEl.innerHTML = `Status: <strong>${statusText}</strong>`;
+
+  // Recovery / Gap Badge Indicator UI
+  const badgeEl = document.getElementById('recoveryBadge');
+  if (isGapConducted) {
+    badgeEl.innerHTML = `<span class="gap-indicator">🔍 GAP CONDUCTED (Proximal Delay Saved Distal Beat)</span>`;
+  } else if (isZone1Block) {
+    badgeEl.innerHTML = `<span class="vf-indicator">Zone 1 Distal Block (Longer S2 Blocks)</span>`;
+  } else if (S.pvcResetBonus > 0 && ventriclesConducted && !S.pvcActive) {
+    badgeEl.innerHTML = `<span class="recovery-indicator">⚡ PVC Reset Bundles (Narrow QRS Restored)</span>`;
+  } else {
+    badgeEl.innerHTML = '';
+  }
+
+  // UI Readouts
+  document.getElementById('livePr').textContent = prInterval ? prInterval + ' ms' : '— (Blocked)';
+  document.getElementById('liveQrs').textContent = ventriclesConducted ? calculatedQrsDuration + ' ms' : '— (No QRS)';
+  document.getElementById('liveCondState').textContent = condLabel;
+  document.getElementById('liveCondState').style.color = isGapConducted ? '#38bdf8' : (isBlocked ? 'var(--red)' : (isWarning ? 'var(--orange)' : 'var(--green)'));
+
+  return {
+    avBlocked, rbBlocked, lbBlocked, rbDegree, lbDegree, ventriclesConducted,
+    effectiveAvDelay, effectiveRbDelay, effectiveLbDelay, prInterval,
+    qrsDuration: calculatedQrsDuration, isS2Beat, isGapConducted
+  };
+}
+
+// UPDATE SVG ANATOMICAL PATHWAY ANIMATION
+function updatePathwaySvg(cond) {
+  const pSA = document.getElementById('pulse_sa');
+  const pAV = document.getElementById('pulse_av');
+  const pRB = document.getElementById('pulse_rb');
+  const pLB = document.getElementById('pulse_lb');
+  const pTrans = document.getElementById('pulse_trans');
+  const pRetro = document.getElementById('pulse_retro');
+  const pPVC = document.getElementById('pulse_pvc');
+  const pvcGroup = document.getElementById('pvc_focus_group');
+  const vfGroup = document.getElementById('vf_wavelets_group');
+
+  const pathAtria = document.getElementById('path_atria');
+  const nodeAV = document.getElementById('node_av');
+  const pathRB = document.getElementById('path_rb');
+  const pathLB = document.getElementById('path_lb');
+
+  const pathTransL2R = document.getElementById('path_trans_l2r');
+  const pathTransR2L = document.getElementById('path_trans_r2l');
+  const pathRetroRB = document.getElementById('path_retro_rb');
+  const pathRetroLB = document.getElementById('path_retro_lb');
+  const transLabel = document.getElementById('trans_label');
+
+  if (S.inVF) {
+    vfGroup.setAttribute('opacity', '1');
+    pvcGroup.setAttribute('opacity', '1');
+    transLabel.textContent = '⚠️ Chaotic Re-entry Wavelets — Polymorphic VT / VF Active';
+
+    const r1 = 12 + Math.sin(Date.now() * 0.02) * 10;
+    const r2 = 14 + Math.cos(Date.now() * 0.025) * 12;
+    const r3 = 18 + Math.sin(Date.now() * 0.018) * 14;
+
+    document.getElementById('vf_w1').setAttribute('r', r1);
+    document.getElementById('vf_w2').setAttribute('r', r2);
+    document.getElementById('vf_w3').setAttribute('r', r3);
+    return;
+  } else {
+    vfGroup.setAttribute('opacity', '0');
+  }
+
+  const avColor = getConductionColor(cond.effectiveAvDelay, cond.avBlocked);
+  const rbColor = getConductionColor(cond.effectiveRbDelay, cond.rbBlocked);
+  const lbColor = getConductionColor(cond.effectiveLbDelay, cond.lbBlocked);
+
+  nodeAV.setAttribute('fill', avColor);
+  pathRB.setAttribute('stroke', rbColor);
+  pathLB.setAttribute('stroke', lbColor);
+
+  const tAtria = 60;
+  const avDur = Math.max(40, cond.effectiveAvDelay);
+  const tAvEnd = tAtria + avDur;
+
+  pathTransL2R.setAttribute('opacity', '0');
+  pathTransR2L.setAttribute('opacity', '0');
+  pathRetroRB.setAttribute('opacity', '0');
+  pathRetroLB.setAttribute('opacity', '0');
+  pvcGroup.setAttribute('opacity', '0');
+  transLabel.textContent = '';
+  pTrans.setAttribute('r', '0');
+  pRetro.setAttribute('r', '0');
+  pPVC.setAttribute('r', '0');
+
+  // SA Node & Atria Wavefront
+  if (S.t <= tAtria) {
+    const progress = S.t / tAtria;
+    pSA.setAttribute('cx', 155 + progress * 70);
+    pSA.setAttribute('cy', 70 + progress * 55);
+    pSA.setAttribute('r', '5');
+    pathAtria.setAttribute('stroke', '#f472b6');
+  } else {
+    pSA.setAttribute('cx', 225);
+    pSA.setAttribute('cy', 125);
+    pSA.setAttribute('r', '2');
+  }
+
+  // AV Node Wavefront
+  if (S.t > tAtria && S.t <= tAvEnd) {
+    if (cond.avBlocked && !S.pvcActive) {
+      pAV.setAttribute('r', '0');
+    } else {
+      const prg = (S.t - tAtria) / avDur;
+      pAV.setAttribute('cx', 225);
+      pAV.setAttribute('cy', 125 + prg * 24);
+      pAV.setAttribute('r', '6');
+    }
+  } else {
+    pAV.setAttribute('r', '0');
+  }
+
+  // PVC BEAT ANIMATION
+  if (S.pvcActive) {
+    pvcGroup.setAttribute('opacity', '1');
+    transLabel.textContent = '⚡ PVC Ectopic Focus → Retrograde Bundle Penetration';
+
+    const pvcStart = S.pvcCoupling;
+    const pvcDur = 140;
+
+    if (S.t >= pvcStart && S.t <= pvcStart + pvcDur) {
+      const prg = (S.t - pvcStart) / pvcDur;
+      pPVC.setAttribute('cx', 300 - prg * 150);
+      pPVC.setAttribute('cy', 400 - prg * 180);
+      pPVC.setAttribute('r', '7');
+    }
+    return;
+  }
+
+  // BUNDLE BRANCH WAVEFRONTS & TRANS-MYOCARDIAL RETROGRADE ANIMATION
+  if (!cond.avBlocked) {
+    if (cond.rbBlocked && !cond.lbBlocked) {
+      transLabel.textContent = 'Trans-Myocardial Septal Conduction → Retrograde RB Penetration';
+      pathTransL2R.setAttribute('opacity', '1');
+      pathRetroRB.setAttribute('opacity', '1');
+
+      const lbDur = Math.max(50, cond.effectiveLbDelay);
+      const transDur = 60;
+      const retroDur = 70;
+
+      const tLbEnd = tAvEnd + lbDur;
+      const tTransEnd = tLbEnd + transDur;
+      const tRetroEnd = tTransEnd + retroDur;
+
+      if (S.t > tAvEnd && S.t <= tLbEnd) {
+        const prg = (S.t - tAvEnd) / lbDur;
+        pLB.setAttribute('cx', 225 + prg * 85);
+        pLB.setAttribute('cy', 185 + prg * 185);
+        pLB.setAttribute('r', '5');
+      } else { pLB.setAttribute('r', '0'); }
+
+      if (S.t > tLbEnd && S.t <= tTransEnd) {
+        const prg = (S.t - tLbEnd) / transDur;
+        pTrans.setAttribute('cx', 280 - prg * 125);
+        pTrans.setAttribute('cy', 320 + prg * 10);
+        pTrans.setAttribute('r', '5');
+      }
+
+      if (S.t > tTransEnd && S.t <= tRetroEnd) {
+        const prg = (S.t - tTransEnd) / retroDur;
+        pRetro.setAttribute('cx', 140 + prg * 65);
+        pRetro.setAttribute('cy', 370 - prg * 150);
+        pRetro.setAttribute('r', '5');
+      }
+
+    } else if (cond.lbBlocked && !cond.rbBlocked) {
+      transLabel.textContent = 'Trans-Myocardial Septal Conduction → Retrograde LB Penetration';
+      pathTransR2L.setAttribute('opacity', '1');
+      pathRetroLB.setAttribute('opacity', '1');
+
+      const rbDur = Math.max(50, cond.effectiveRbDelay);
+      const transDur = 60;
+      const retroDur = 70;
+
+      const tRbEnd = tAvEnd + rbDur;
+      const tTransEnd = tRbEnd + transDur;
+      const tRetroEnd = tTransEnd + retroDur;
+
+      if (S.t > tAvEnd && S.t <= tRbEnd) {
+        const prg = (S.t - tAvEnd) / rbDur;
+        pRB.setAttribute('cx', 225 - prg * 85);
+        pRB.setAttribute('cy', 185 + prg * 185);
+        pRB.setAttribute('r', '5');
+      } else { pRB.setAttribute('r', '0'); }
+
+      if (S.t > tRbEnd && S.t <= tTransEnd) {
+        const prg = (S.t - tRbEnd) / transDur;
+        pTrans.setAttribute('cx', 170 + prg * 125);
+        pTrans.setAttribute('cy', 320 + prg * 10);
+        pTrans.setAttribute('r', '5');
+      }
+
+      if (S.t > tTransEnd && S.t <= tRetroEnd) {
+        const prg = (S.t - tTransEnd) / retroDur;
+        pRetro.setAttribute('cx', 310 - prg * 65);
+        pRetro.setAttribute('cy', 370 - prg * 150);
+        pRetro.setAttribute('r', '5');
+      }
+
+    } else if (!cond.rbBlocked && !cond.lbBlocked) {
+      const rbDur = Math.max(40, cond.effectiveRbDelay * 1.1);
+      const lbDur = Math.max(40, cond.effectiveLbDelay * 1.1);
+
+      if (S.t > tAvEnd && S.t <= tAvEnd + rbDur) {
+        const prg = (S.t - tAvEnd) / rbDur;
+        pRB.setAttribute('cx', 225 - prg * 85);
+        pRB.setAttribute('cy', 185 + prg * 185);
+        pRB.setAttribute('r', '5');
+      } else { pRB.setAttribute('r', '0'); }
+
+      if (S.t > tAvEnd && S.t <= tAvEnd + lbDur) {
+        const prg = (S.t - tAvEnd) / lbDur;
+        pLB.setAttribute('cx', 225 + prg * 85);
+        pLB.setAttribute('cy', 185 + prg * 185);
+        pLB.setAttribute('r', '5');
+      } else { pLB.setAttribute('r', '0'); }
+    }
+  }
+}
+
+// DRAW ACTION POTENTIAL & FAST NA+ AVAILABILITY GRAPH
+function drawActionPotentialGraph() {
+  const canvas = document.getElementById('apCanvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background Grid
+  ctx.strokeStyle = '#17263c';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  // Axis Labels
+  ctx.fillStyle = '#8e9bb0';
+  ctx.font = '10px ui-monospace, monospace';
+  ctx.fillText('+20 mV', 10, 45);
+  ctx.fillText('0 mV', 18, 95);
+  ctx.fillText('-40 mV', 10, 145);
+  ctx.fillText('-80 mV (Resting)', 10, 195);
+  ctx.fillText('100% Na+ Availability', 10, 245);
+  ctx.fillText('0% Na+', 10, 360);
+
+  let baseErp = S.apTab === 'av' ? S.avErp : (S.apTab === 'rb' ? S.rbErp : S.lbErp);
+  let effectiveErp = (S.apTab === 'rb' || S.apTab === 'lb') ? Math.max(150, baseErp - S.pauseRecoveryBonus - S.pvcResetBonus) : baseErp;
+  let erpX = (effectiveErp / S.tcl) * (w - 80) + 60;
+
+  // Absolute Refractory Period Band
+  ctx.fillStyle = '#f8717118';
+  ctx.fillRect(60, 20, Math.min(w - 70, erpX * 0.7), 340);
+  ctx.fillStyle = '#f8717180'; ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('Absolute Refractory (ARP)', 70, 35);
+
+  // Relative Refractory Period Band
+  ctx.fillStyle = '#ef444430';
+  ctx.fillRect(60 + erpX * 0.7, 20, Math.min(w - 70 - erpX * 0.7, erpX * 0.3), 340);
+  ctx.fillStyle = '#fca5a5';
+  ctx.fillText('Vulnerable T-Zone', 60 + erpX * 0.7 + 5, 35);
+
+  // ACTION POTENTIAL CURVE
+  ctx.beginPath(); ctx.lineWidth = 3;
+  ctx.strokeStyle = S.apTab === 'av' ? '#fb923c' : (S.apTab === 'rb' ? '#38bdf8' : '#4ade80');
+
+  const startX = 60; const restY = 195; const peakY = 40;
+
+  if (S.apTab === 'av') {
+    ctx.moveTo(startX, restY);
+    ctx.quadraticCurveTo(startX + 30, restY, startX + 50, peakY + 20);
+    ctx.quadraticCurveTo(startX + 120, peakY + 30, Math.min(w - 20, startX + erpX), restY);
+    ctx.lineTo(w - 20, restY);
+  } else {
+    ctx.moveTo(startX, restY);
+    ctx.lineTo(startX + 15, peakY); ctx.lineTo(startX + 30, peakY + 15);
+    ctx.lineTo(startX + 120, peakY + 20);
+    ctx.quadraticCurveTo(startX + 180, peakY + 60, Math.min(w - 20, startX + erpX), restY);
+    const p4EndY = restY - (S.p4Drift * 0.4);
+    ctx.lineTo(w - 20, p4EndY);
+  }
+  ctx.stroke();
+
+  // FAST NA+ CHANNEL AVAILABILITY CURVE
+  ctx.beginPath(); ctx.lineWidth = 2; ctx.strokeStyle = '#facc15'; ctx.setLineDash([4, 4]);
+  const na0Y = 360; const na100Y = 240;
+  ctx.moveTo(startX, na0Y); ctx.lineTo(startX + erpX * 0.5, na0Y);
+  ctx.bezierCurveTo(startX + erpX * 0.8, na0Y, startX + erpX, na100Y, Math.min(w - 20, startX + erpX + 40), na100Y);
+  ctx.lineTo(w - 20, na100Y); ctx.stroke(); ctx.setLineDash([]);
+
+  // Time Indicator Line
+  const curX = (S.t / S.tcl) * (w - 80) + 60;
+  ctx.strokeStyle = S.inVF ? '#ef4444' : '#fff';
+  ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(curX, 20); ctx.lineTo(curX, 370); ctx.stroke();
+}
+
+// REAL-TIME DUAL LEAD ECG OSCILLOSCOPE (LEAD V1 TOP, LEAD II BOTTOM)
+function updateLiveEcgOscilloscope(cond) {
+  const canvas = document.getElementById('liveEcgCanvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  let sigLeadV1 = 0;
+  let sigLead2 = 0;
+  const t = S.t;
+
+  if (S.inVF) {
+    const now = Date.now() * 0.015;
+    sigLeadV1 = Math.sin(now) * 35 + Math.sin(now * 2.3) * 20 + (Math.random() - 0.5) * 12;
+    sigLead2 = -Math.sin(now * 1.2) * 40 + Math.cos(now * 2.8) * 25 + (Math.random() - 0.5) * 12;
+  } else if (S.pvcActive) {
+    const pvcStart = S.pvcCoupling;
+    if (t >= pvcStart && t <= pvcStart + 160) {
+      const rel = (t - pvcStart) / 160;
+      sigLeadV1 = Math.sin(rel * Math.PI) * 65;
+      sigLead2 = -Math.sin(rel * Math.PI) * 55;
+    }
+  } else {
+    // 1. P Wave (S1 or S2 extra-stimulus)
+    if (t >= 10 && t <= 70) {
+      sigLeadV1 = Math.sin((t - 10) / 60 * Math.PI) * 14;
+      sigLead2 = Math.sin((t - 10) / 60 * Math.PI) * 16;
+    }
+
+    if (S.gapActive && t >= S.s1s2 && t <= S.s1s2 + 60) {
+      sigLeadV1 = Math.sin((t - S.s1s2) / 60 * Math.PI) * 16;
+      sigLead2 = Math.sin((t - S.s1s2) / 60 * Math.PI) * 18;
+    }
+
+    // 2. QRS Morphogenesis
+    if (cond.ventriclesConducted) {
+      const qrsStart = 60 + cond.effectiveAvDelay;
+      const dur = cond.qrsDuration;
+      const rbD = cond.rbDegree;
+      const lbD = cond.lbDegree;
+
+      if (t >= qrsStart && t <= qrsStart + dur) {
+        const qt = t - qrsStart;
+        const rel = qt / dur;
+
+        // LEAD V1 MORPHOLOGY (TOP)
+        if (rbD > 0.1 && rbD >= lbD) {
+          const r1Peak = 14 + (1 - rbD) * 4;
+          const sDeep = -18 - (1 - rbD) * 30;
+          const r2Peak = rbD * 58;
+
+          if (rel < 0.2) sigLeadV1 = Math.sin(rel / 0.2 * Math.PI) * r1Peak;
+          else if (rel < 0.45) sigLeadV1 = sDeep * Math.sin((rel - 0.2) / 0.25 * Math.PI);
+          else if (rel < 0.9) sigLeadV1 = r2Peak * Math.sin((rel - 0.45) / 0.45 * Math.PI);
+        } else if (lbD > 0.1 && lbD > rbD) {
+          const r1Peak = 14 * (1 - lbD * 0.8);
+          const sDepth = -45 - lbD * 20;
+
+          if (rel < 0.15) sigLeadV1 = Math.sin(rel / 0.15 * Math.PI) * r1Peak;
+          else if (rel < 0.5) sigLeadV1 = sDepth * Math.sin((rel - 0.15) / 0.35 * Math.PI);
+          else if (rel < 0.65) sigLeadV1 = (sDepth + 20 * lbD) * Math.sin((rel - 0.5) / 0.15 * Math.PI);
+          else if (rel < 0.92) sigLeadV1 = (sDepth - 5 * lbD) * Math.sin((rel - 0.65) / 0.27 * Math.PI);
+        } else {
+          if (rel < 0.2) sigLeadV1 = Math.sin(rel / 0.2 * Math.PI) * 16;
+          else if (rel < 0.8) sigLeadV1 = -50 * Math.sin((rel - 0.2) / 0.6 * Math.PI);
+        }
+
+        // LEAD II MORPHOLOGY (BOTTOM)
+        if (lbD > 0.1 && lbD >= rbD) {
+          if (rel < 0.2) sigLead2 = Math.sin(rel / 0.2 * Math.PI) * 20;
+          else if (rel < 0.5) sigLead2 = Math.sin((rel - 0.2) / 0.3 * Math.PI) * 52;
+          else if (rel < 0.7) sigLead2 = 42 + Math.sin((rel - 0.5) / 0.2 * Math.PI) * 12;
+          else if (rel < 0.95) sigLead2 = (1 - (rel - 0.7) / 0.25) * 45;
+        } else if (rbD > 0.1 && rbD > lbD) {
+          if (rel < 0.3) sigLead2 = Math.sin(rel / 0.3 * Math.PI) * 50;
+          else if (rel < 0.8) sigLead2 = -Math.sin((rel - 0.3) / 0.5 * Math.PI) * (20 * rbD);
+        } else {
+          if (rel < 0.1) sigLead2 = -6;
+          else if (rel < 0.5) sigLead2 = Math.sin((rel - 0.1) / 0.4 * Math.PI) * 58;
+          else if (rel < 0.8) sigLead2 = -Math.sin((rel - 0.5) / 0.3 * Math.PI) * 12;
+        }
+      }
+
+      // 3. T Wave
+      const tStart = qrsStart + dur + 20;
+      if (t >= tStart && t <= tStart + 130) {
+        const relT = (t - tStart) / 130;
+        if (rbD > 0.5) sigLeadV1 = -Math.sin(relT * Math.PI) * 22 * rbD;
+        else if (lbD > 0.5) sigLeadV1 = Math.sin(relT * Math.PI) * 22 * lbD;
+        else sigLeadV1 = Math.sin(relT * Math.PI) * 14;
+
+        if (lbD > 0.5) sigLead2 = -Math.sin(relT * Math.PI) * 16 * lbD;
+        else sigLead2 = Math.sin(relT * Math.PI) * 18;
+      }
+    }
+  }
+
+  S.ecgBufferLeadV1.shift(); S.ecgBufferLeadV1.push(sigLeadV1);
+  S.ecgBufferLead2.shift(); S.ecgBufferLead2.push(sigLead2);
+
+  // Render Oscilloscope
+  ctx.clearRect(0, 0, w, h);
+
+  ctx.strokeStyle = S.inVF ? '#2d0a0e' : '#132238'; ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 25) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += 25) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  const midYV1 = 50;
+  const midY2 = 140;
+
+  ctx.strokeStyle = S.inVF ? '#7f1d1d' : '#182f52';
+  ctx.beginPath(); ctx.moveTo(0, midYV1); ctx.lineTo(w, midYV1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, midY2); ctx.lineTo(w, midY2); ctx.stroke();
+
+  ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 11px ui-monospace, monospace';
+  ctx.fillText('LEAD V1 (TOP)', 10, midYV1 - 25);
+  ctx.fillStyle = '#4ade80';
+  ctx.fillText('LEAD II (BOTTOM)', 10, midY2 - 25);
+
+  const stepX = w / S.ecgBufferLeadV1.length;
+
+  // Render Lead V1 Trace Path (TOP)
+  ctx.beginPath(); ctx.lineWidth = 2.0; ctx.strokeStyle = S.inVF ? '#ef4444' : '#38bdf8';
+  for (let i = 0; i < S.ecgBufferLeadV1.length; i++) {
+    const x = i * stepX; const y = midYV1 - S.ecgBufferLeadV1[i];
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Render Lead II Trace Path (BOTTOM)
+  ctx.beginPath(); ctx.lineWidth = 2.0; ctx.strokeStyle = S.inVF ? '#f87171' : '#4ade80';
+  for (let i = 0; i < S.ecgBufferLead2.length; i++) {
+    const x = i * stepX; const y = midY2 - S.ecgBufferLead2[i];
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+}
+
+// DRAW STATIC DUAL LEAD ECG CARDS
+function drawStaticScenarioECGs() {
+  const drawCardEcg = (canvasId, type) => {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width; const h = canvas.height;
+    const yV1 = 25; const y2 = 62;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = '#0e1b2e';
+    for (let x = 0; x < w; x += 15) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 15) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    ctx.fillStyle = '#8e9bb0'; ctx.font = '9px monospace';
+    ctx.fillText('V1', 6, yV1 - 10); ctx.fillText('II', 6, y2 - 10);
+
+    ctx.beginPath(); ctx.lineWidth = 1.8; ctx.strokeStyle = type === 'vf' ? '#ef4444' : '#38bdf8';
+    if (type === 'normal') {
+      ctx.moveTo(20, yV1); ctx.quadraticCurveTo(30, yV1 - 8, 40, yV1); ctx.lineTo(65, yV1);
+      ctx.lineTo(72, yV1 - 8); ctx.lineTo(85, yV1 + 22); ctx.lineTo(95, yV1); ctx.lineTo(270, yV1);
+    } else if (type === 'gap') {
+      ctx.moveTo(10, yV1); ctx.quadraticCurveTo(20, yV1 - 8, 30, yV1); ctx.lineTo(50, yV1);
+      ctx.lineTo(58, yV1 - 8); ctx.lineTo(70, yV1 + 22); ctx.lineTo(80, yV1); ctx.lineTo(130, yV1);
+      ctx.quadraticCurveTo(140, yV1 - 8, 150, yV1); ctx.lineTo(175, yV1); // S2 P
+      ctx.lineTo(185, yV1 - 8); ctx.lineTo(198, yV1 + 22); ctx.lineTo(210, yV1); ctx.lineTo(270, yV1); // S2 QRS Conducted!
+    } else if (type === 'vf') {
+      for (let x = 0; x < w; x += 5) {
+        const y = yV1 + Math.sin(x * 0.1) * 15 + Math.cos(x * 0.25) * 8;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+    } else if (type === 'rbbb') {
+      ctx.moveTo(20, yV1); ctx.quadraticCurveTo(30, yV1 - 8, 40, yV1); ctx.lineTo(60, yV1);
+      ctx.lineTo(66, yV1 - 10); ctx.lineTo(74, yV1 + 10); ctx.lineTo(88, yV1 - 25); ctx.lineTo(100, yV1); ctx.lineTo(270, yV1);
+    } else if (type === 'lbbb') {
+      ctx.moveTo(20, yV1); ctx.quadraticCurveTo(30, yV1 - 8, 40, yV1); ctx.lineTo(60, yV1);
+      ctx.lineTo(65, yV1 - 4); ctx.lineTo(76, yV1 + 24); ctx.lineTo(82, yV1 + 14); ctx.lineTo(95, yV1 + 26); ctx.lineTo(108, yV1); ctx.lineTo(270, yV1);
+    } else if (type === 'bilateral') {
+      ctx.moveTo(20, yV1); ctx.quadraticCurveTo(30, yV1 - 8, 40, yV1); ctx.lineTo(120, yV1);
+      ctx.quadraticCurveTo(132, yV1 - 8, 142, yV1); ctx.lineTo(270, yV1);
+    }
+    ctx.stroke();
+
+    ctx.beginPath(); ctx.lineWidth = 1.8; ctx.strokeStyle = type === 'vf' ? '#f87171' : '#4ade80';
+    if (type === 'normal') {
+      ctx.moveTo(20, y2); ctx.quadraticCurveTo(30, y2 - 8, 40, y2); ctx.lineTo(65, y2);
+      ctx.lineTo(70, y2 + 4); ctx.lineTo(80, y2 - 25); ctx.lineTo(88, y2 + 8); ctx.lineTo(270, y2);
+    } else if (type === 'gap') {
+      ctx.moveTo(10, y2); ctx.quadraticCurveTo(20, y2 - 8, 30, y2); ctx.lineTo(50, y2);
+      ctx.lineTo(58, y2 + 4); ctx.lineTo(68, y2 - 25); ctx.lineTo(78, y2 + 8); ctx.lineTo(130, y2);
+      ctx.quadraticCurveTo(140, y2 - 8, 150, y2); ctx.lineTo(175, y2);
+      ctx.lineTo(185, y2 + 4); ctx.lineTo(198, y2 - 25); ctx.lineTo(208, y2 + 8); ctx.lineTo(270, y2);
+    } else if (type === 'vf') {
+      for (let x = 0; x < w; x += 5) {
+        const y = y2 - Math.sin(x * 0.12) * 18 + Math.sin(x * 0.3) * 10;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+    } else if (type === 'rbbb') {
+      ctx.moveTo(20, y2); ctx.quadraticCurveTo(30, y2 - 8, 40, y2); ctx.lineTo(65, y2);
+      ctx.lineTo(75, y2 - 25); ctx.lineTo(95, y2 + 15); ctx.lineTo(270, y2);
+    } else if (type === 'lbbb') {
+      ctx.moveTo(20, y2); ctx.quadraticCurveTo(30, y2 - 8, 40, y2); ctx.lineTo(60, y2);
+      ctx.lineTo(75, y2 - 22); ctx.lineTo(82, y2 - 14); ctx.lineTo(95, y2 - 25); ctx.lineTo(270, y2);
+    } else if (type === 'bilateral') {
+      ctx.moveTo(20, y2); ctx.quadraticCurveTo(30, y2 - 8, 40, y2); ctx.lineTo(130, y2);
+      ctx.quadraticCurveTo(145, y2 - 8, 155, y2); ctx.lineTo(270, y2);
+    }
+    ctx.stroke();
+  };
+
+  drawCardEcg('secg_normal', 'normal');
+  drawCardEcg('secg_gap', 'gap');
+  drawCardEcg('secg_vf', 'vf');
+  drawCardEcg('secg_rbbb', 'rbbb');
+  drawCardEcg('secg_lbbb', 'lbbb');
+  drawCardEcg('secg_bilateral', 'bilateral');
+}
+</script>
+</body>
+</html>
